@@ -1,0 +1,384 @@
+<Window x:Class="FitnessTimer.App.MainWindow"
+        x:Name="Root"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:FitnessTimer.App.Views"
+        mc:Ignorable="d"
+        Title="健身间歇计时器"
+        Icon="Assets/app-icon.ico"
+        MinHeight="680"
+        MinWidth="1040"
+        Height="760"
+        Width="1180"
+        Background="{DynamicResource AppBackgroundBrush}"
+        WindowStartupLocation="CenterScreen">
+    <Grid x:Name="LayoutRoot" Background="{DynamicResource AppBackgroundBrush}" Margin="22">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="TimerColumn" Width="1.1*" MinWidth="500" />
+            <ColumnDefinition x:Name="SpacerColumn" Width="22" />
+            <ColumnDefinition x:Name="DetailsColumn" Width="0.95*" MinWidth="460" />
+        </Grid.ColumnDefinitions>
+
+        <Border x:Name="TimerPanel"
+                Grid.Column="0"
+                Background="{DynamicResource PanelBackgroundBrush}"
+                BorderBrush="{DynamicResource BorderBrushSoft}"
+                BorderThickness="1"
+                CornerRadius="16"
+                Padding="30">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <DockPanel>
+                    <StackPanel x:Name="HeaderTextPanel" DockPanel.Dock="Left">
+                        <TextBlock x:Name="TitleTextBlock" Text="健身间歇计时器" FontSize="28" FontWeight="Bold" />
+                        <TextBlock Text="{Binding ElementName=Root, Path=StatusText}" Style="{StaticResource MutedTextBlock}" Margin="0,6,0,0" />
+                    </StackPanel>
+                    <Border x:Name="PhaseBadge"
+                            DockPanel.Dock="Right"
+                            Background="{DynamicResource BadgeBackgroundBrush}"
+                            BorderBrush="{DynamicResource BadgeBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="14,8"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top">
+                        <TextBlock Text="{Binding ElementName=Root, Path=PhaseText}" Foreground="{DynamicResource AccentDarkBrush}" FontWeight="SemiBold" />
+                    </Border>
+                </DockPanel>
+
+                <Grid x:Name="TimerBodyGrid" Grid.Row="1" Margin="0,18,0,18">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <UniformGrid x:Name="SummaryGrid" Grid.Row="0" Columns="3" Margin="0,0,0,14">
+                        <StackPanel>
+                            <TextBlock Text="当前组" Style="{StaticResource MutedTextBlock}" />
+                            <TextBlock x:Name="GroupSummaryTextBlock" Text="{Binding ElementName=Root, Path=GroupText}" FontSize="20" FontWeight="SemiBold" Margin="0,4,0,0" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="动作" Style="{StaticResource MutedTextBlock}" />
+                            <TextBlock x:Name="ActionSummaryTextBlock" Text="{Binding ElementName=Root, Path=ActionText}" FontSize="20" FontWeight="SemiBold" Margin="0,4,0,0" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="下一阶段" Style="{StaticResource MutedTextBlock}" />
+                            <TextBlock x:Name="NextPhaseSummaryTextBlock" Text="{Binding ElementName=Root, Path=NextPhaseText}" FontSize="20" FontWeight="SemiBold" Margin="0,4,0,0" />
+                        </StackPanel>
+                    </UniformGrid>
+
+                    <Grid Grid.Row="1">
+                        <Ellipse x:Name="TimerCircle"
+                                 Fill="{DynamicResource TimerCircleBrush}"
+                                 Width="390"
+                                 Height="390"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center" />
+                        <views:CircularProgressRing x:Name="TimerProgressRing"
+                                                    Width="390"
+                                                    Height="390"
+                                                    Progress="{Binding ElementName=Root, Path=TimerProgress}"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center" />
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock x:Name="ClockTextBlock"
+                                       Text="{Binding ElementName=Root, Path=ClockText}"
+                                       FontSize="82"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock x:Name="ClockHintTextBlock"
+                                       Text="{Binding ElementName=Root, Path=ClockHintText}"
+                                       Style="{StaticResource MutedTextBlock}"
+                                       FontSize="16"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,8,0,0" />
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock x:Name="FooterTextBlock"
+                               Grid.Row="2"
+                               Text="{Binding ElementName=Root, Path=FooterText}"
+                               Style="{StaticResource MutedTextBlock}"
+                               HorizontalAlignment="Center"
+                               Margin="0,12,0,0" />
+                </Grid>
+
+                <UniformGrid x:Name="TimerButtonsGrid" Grid.Row="2" Columns="4">
+                    <Button x:Name="StartPauseButton"
+                            Content="{Binding ElementName=Root, Path=StartPauseText}"
+                            Style="{StaticResource PrimaryButton}"
+                            Click="StartPauseButton_Click" />
+                    <Button x:Name="StopButton" Content="停止" Click="StopButton_Click" />
+                    <Button x:Name="SkipButton" Content="跳过当前阶段" Click="SkipButton_Click" />
+                    <Button x:Name="CompactButton" Content="{Binding ElementName=Root, Path=CompactModeText}" Click="CompactButton_Click" />
+                </UniformGrid>
+            </Grid>
+        </Border>
+
+        <Border x:Name="DetailsPanel"
+                Grid.Column="2"
+                Background="{DynamicResource PanelBackgroundBrush}"
+                BorderBrush="{DynamicResource BorderBrushSoft}"
+                BorderThickness="1"
+                CornerRadius="16"
+                Padding="18">
+            <TabControl x:Name="MainTabs" SelectionChanged="MainTabs_SelectionChanged">
+                <TabItem Header="计划" Tag="Plan">
+                    <Grid Margin="0,14,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <DockPanel Margin="0,0,0,10">
+                            <TextBlock Text="训练方案" FontSize="20" FontWeight="SemiBold" DockPanel.Dock="Left" />
+                            <WrapPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
+                                <Button Content="新增方案"
+                                        MinWidth="78"
+                                        Command="{Binding AddPlanCommand}" />
+                                <Button Content="删除方案"
+                                        MinWidth="78"
+                                        Command="{Binding DeletePlanCommand}"
+                                        CommandParameter="{Binding SelectedPlan}" />
+                            </WrapPanel>
+                        </DockPanel>
+                        <Grid Grid.Row="1" Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.1*" />
+                                <ColumnDefinition Width="12" />
+                                <ColumnDefinition Width="1.2*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="当前方案" Style="{StaticResource MutedTextBlock}" />
+                                <ComboBox ItemsSource="{Binding Plans}"
+                                          SelectedItem="{Binding SelectedPlan}"
+                                          MinHeight="34"
+                                          Margin="0,6,0,0">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="方案名称" Style="{StaticResource MutedTextBlock}" />
+                                <TextBox Text="{Binding SelectedPlan.Name, UpdateSourceTrigger=PropertyChanged}"
+                                         LostFocus="PlanNameTextBox_LostFocus"
+                                         Margin="0,6,0,0" />
+                            </StackPanel>
+                            <Button Grid.Column="3"
+                                    Content="新增动作"
+                                    MinWidth="78"
+                                    Command="{Binding AddGroupCommand}"
+                                    VerticalAlignment="Bottom" />
+                        </Grid>
+                        <DataGrid Grid.Row="2"
+                                  x:Name="PlanGrid"
+                                  ItemsSource="{Binding Groups}"
+                                  AutoGenerateColumns="False"
+                                  SelectionMode="Single"
+                                  CellEditEnding="PlanGrid_CellEditEnding">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="#" Binding="{Binding Order}" Width="44" IsReadOnly="True" />
+                                <DataGridTextColumn Header="动作名称" Binding="{Binding ActionName}" Width="*" />
+                                <DataGridTemplateColumn Header="训练秒" Width="78">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding TrainingSeconds}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                    <DataGridTemplateColumn.CellEditingTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding TrainingSeconds, UpdateSourceTrigger=PropertyChanged}"
+                                                     PreviewTextInput="SecondsTextBox_PreviewTextInput"
+                                                     DataObject.Pasting="SecondsTextBox_Pasting" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellEditingTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="休息秒" Width="78">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding RestSeconds}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                    <DataGridTemplateColumn.CellEditingTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding RestSeconds, UpdateSourceTrigger=PropertyChanged}"
+                                                     PreviewTextInput="SecondsTextBox_PreviewTextInput"
+                                                     DataObject.Pasting="SecondsTextBox_Pasting" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellEditingTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="操作" Width="112">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button Style="{StaticResource IconButton}"
+                                                        ToolTip="上移"
+                                                        Command="{Binding DataContext.MoveGroupUpCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding}">
+                                                    <Path Data="M 8 4 L 14 10 H 10 V 20 H 6 V 10 H 2 Z"
+                                                          Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                          Stretch="Uniform"
+                                                          Width="14"
+                                                          Height="14" />
+                                                </Button>
+                                                <Button Style="{StaticResource IconButton}"
+                                                        ToolTip="下移"
+                                                        Command="{Binding DataContext.MoveGroupDownCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding}">
+                                                    <Path Data="M 8 20 L 2 14 H 6 V 4 H 10 V 14 H 14 Z"
+                                                          Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                          Stretch="Uniform"
+                                                          Width="14"
+                                                          Height="14" />
+                                                </Button>
+                                                <Button Style="{StaticResource IconButton}"
+                                                        ToolTip="删除"
+                                                        Command="{Binding DataContext.DeleteGroupCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding}">
+                                                    <Path Data="M 5 6 H 15 M 7 6 V 4 H 13 V 6 M 7 8 V 17 M 10 8 V 17 M 13 8 V 17 M 6 6 L 7 19 H 13 L 14 6"
+                                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                          StrokeThickness="1.7"
+                                                          StrokeStartLineCap="Round"
+                                                          StrokeEndLineCap="Round"
+                                                          StrokeLineJoin="Round"
+                                                          Stretch="Uniform"
+                                                          Width="14"
+                                                          Height="14" />
+                                                </Button>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="历史" Tag="History">
+                    <Grid Margin="0,14,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="1.1*" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="0.9*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="训练记录" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10" />
+                        <DataGrid Grid.Row="1"
+                                  x:Name="HistoryGrid"
+                                  ItemsSource="{Binding History}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="开始时间" Binding="{Binding StartedAt, StringFormat=yyyy-MM-dd HH:mm}" Width="140" />
+                                <DataGridTextColumn Header="方案" Binding="{Binding PlanSnapshot.Name}" Width="96" />
+                                <DataGridCheckBoxColumn Header="完成" Binding="{Binding IsCompleted}" Width="56" />
+                                <DataGridTextColumn Header="组数" Binding="{Binding CompletedGroups}" Width="52" />
+                                <DataGridTextColumn Header="训练秒" Binding="{Binding ActualTrainingSeconds}" Width="72" />
+                                <DataGridTextColumn Header="总秒数" Binding="{Binding TotalElapsedSeconds}" Width="72" />
+                                <DataGridTemplateColumn Header="操作" Width="48">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Style="{StaticResource IconButton}"
+                                                    ToolTip="删除记录"
+                                                    Click="DeleteHistoryButton_Click">
+                                                <Path Data="M 5 6 H 15 M 7 6 V 4 H 13 V 6 M 7 8 V 17 M 10 8 V 17 M 13 8 V 17 M 6 6 L 7 19 H 13 L 14 6"
+                                                      Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                      StrokeThickness="1.7"
+                                                      StrokeStartLineCap="Round"
+                                                      StrokeEndLineCap="Round"
+                                                      StrokeLineJoin="Round"
+                                                      Stretch="Uniform"
+                                                      Width="14"
+                                                      Height="14" />
+                                            </Button>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <TextBlock Grid.Row="2"
+                                   Text="组详情"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,12,0,8" />
+                        <DataGrid Grid.Row="3"
+                                  ItemsSource="{Binding SelectedItem.Groups, ElementName=HistoryGrid}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="#" Binding="{Binding GroupNumber}" Width="44" />
+                                <DataGridTextColumn Header="动作" Binding="{Binding ActionName}" Width="*" />
+                                <DataGridTextColumn Header="计划训练" Binding="{Binding PlannedTrainingSeconds}" Width="72" />
+                                <DataGridTextColumn Header="实际训练" Binding="{Binding ActualTrainingSeconds}" Width="72" />
+                                <DataGridTextColumn Header="计划休息" Binding="{Binding PlannedRestSeconds}" Width="72" />
+                                <DataGridTextColumn Header="实际休息" Binding="{Binding ActualRestSeconds}" Width="72" />
+                                <DataGridCheckBoxColumn Header="跳训练" Binding="{Binding TrainingSkipped}" Width="64" />
+                                <DataGridCheckBoxColumn Header="跳休息" Binding="{Binding RestSkipped}" Width="64" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="统计" Tag="Statistics">
+                    <StackPanel Margin="0,14,0,0">
+                        <DockPanel>
+                            <TextBlock Text="本期统计" FontSize="20" FontWeight="SemiBold" DockPanel.Dock="Left" />
+                            <CheckBox Content="查看本月"
+                                      IsChecked="{Binding ShowMonthStatistics}"
+                                      HorizontalAlignment="Right"
+                                      DockPanel.Dock="Right" />
+                        </DockPanel>
+                        <UniformGrid Columns="4" Margin="0,12,0,14">
+                            <StackPanel>
+                                <TextBlock Text="次数" Style="{StaticResource MutedTextBlock}" />
+                                <TextBlock Text="{Binding CurrentStatistics.WorkoutCount, FallbackValue=0}" FontSize="22" FontWeight="SemiBold" />
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="总秒数" Style="{StaticResource MutedTextBlock}" />
+                                <TextBlock Text="{Binding CurrentStatistics.TotalElapsedSeconds, FallbackValue=0}" FontSize="22" FontWeight="SemiBold" />
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="训练秒" Style="{StaticResource MutedTextBlock}" />
+                                <TextBlock Text="{Binding CurrentStatistics.ActualTrainingSeconds, FallbackValue=0}" FontSize="22" FontWeight="SemiBold" />
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="休息秒" Style="{StaticResource MutedTextBlock}" />
+                                <TextBlock Text="{Binding CurrentStatistics.RestSeconds, FallbackValue=0}" FontSize="22" FontWeight="SemiBold" />
+                            </StackPanel>
+                        </UniformGrid>
+                        <views:BarChartControl Bars="{Binding CurrentStatistics.Bars}" Height="260" />
+                    </StackPanel>
+                </TabItem>
+
+                <TabItem Header="设置" Tag="Settings">
+                    <StackPanel Margin="0,14,0,0" Width="320" HorizontalAlignment="Left">
+                        <TextBlock Text="设置" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,16" />
+                        <TextBlock Text="准备倒计时（秒）" Style="{StaticResource MutedTextBlock}" />
+                        <TextBox Text="{Binding Settings.PreparationSeconds, UpdateSourceTrigger=PropertyChanged}" Margin="0,6,0,14" />
+                        <CheckBox Content="暗夜模式"
+                                  IsChecked="{Binding Settings.UseDarkMode}"
+                                  Margin="0,0,0,12" />
+                        <CheckBox Content="小窗模式置顶"
+                                  IsChecked="{Binding Settings.CompactAlwaysOnTop}"
+                                  Margin="0,0,0,18" />
+                        <Button Content="保存设置"
+                                Style="{StaticResource PrimaryButton}"
+                                Click="SaveSettingsButton_Click" />
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
+        </Border>
+    </Grid>
+</Window>

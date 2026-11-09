@@ -1,0 +1,19 @@
+bin/
+obj/
+.dotnet-home/
+.codegraph/
+
+# 发布产物
+publish/
+
+# 测试结果（目录名可能带本机用户名）
+TestResults/
+
+# 运行时数据（个人锻炼历史 / 方案 / 设置，程序首次启动自动生成默认数据）
+data/
+
+# 日志
+*.log
+
+# 开发过程文档（含本机路径）
+docs/
